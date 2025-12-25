@@ -172,7 +172,11 @@ fn parse_ruby_module(node: Node, source: &str) -> Option<ParsedSymbolAbi> {
     )
 }
 
-fn parse_ruby_method(node: Node, source: &str, visibility: VisibilityAbi) -> Option<ParsedSymbolAbi> {
+fn parse_ruby_method(
+    node: Node,
+    source: &str,
+    visibility: VisibilityAbi,
+) -> Option<ParsedSymbolAbi> {
     let name = node.child_by_field_name("name")?;
     let name_text = node_text(name, source);
     let doc_comment = extract_doc_comment(node, source);
@@ -193,10 +197,14 @@ fn parse_ruby_singleton_method(node: Node, source: &str) -> Option<ParsedSymbolA
     let signature = extract_method_signature(node, source);
 
     Some(
-        ParsedSymbolAbi::new(format!("self.{}", name_text), SymbolKindAbi::Method, node_location(node))
-            .with_signature(signature)
-            .with_visibility(VisibilityAbi::Public)
-            .with_doc_comment_opt(doc_comment),
+        ParsedSymbolAbi::new(
+            format!("self.{}", name_text),
+            SymbolKindAbi::Method,
+            node_location(node),
+        )
+        .with_signature(signature)
+        .with_visibility(VisibilityAbi::Public)
+        .with_doc_comment_opt(doc_comment),
     )
 }
 
@@ -280,9 +288,27 @@ fn collect_ruby_references(node: Node, source: &str, refs: &mut Vec<ParsedRefere
 fn is_common_method(name: &str) -> bool {
     matches!(
         name,
-        "new" | "initialize" | "to_s" | "to_i" | "to_a" | "to_h" | "inspect" | "class" | "is_a?"
-            | "kind_of?" | "instance_of?" | "respond_to?" | "send" | "puts" | "print" | "p"
-            | "raise" | "fail" | "attr_reader" | "attr_writer" | "attr_accessor"
+        "new"
+            | "initialize"
+            | "to_s"
+            | "to_i"
+            | "to_a"
+            | "to_h"
+            | "inspect"
+            | "class"
+            | "is_a?"
+            | "kind_of?"
+            | "instance_of?"
+            | "respond_to?"
+            | "send"
+            | "puts"
+            | "print"
+            | "p"
+            | "raise"
+            | "fail"
+            | "attr_reader"
+            | "attr_writer"
+            | "attr_accessor"
     )
 }
 
